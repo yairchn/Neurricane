@@ -53,7 +53,7 @@ def TC_fields(RMW ,width_ratio ,offset):
 	Z[:,:,0] = Zb
 	T[:,:,0] = np.add(T0[0], np.multiply(Ta[0],  np.exp(-np.divide( (np.add(np.power(np.subtract(X,X0),2.0),np.power(np.subtract(Y,Y0),2))),(2.0*WT*WT)))))
 
-	for i in range(len(p)-1):
+	for i in range(len(p)):
 		T[:,:,i] = np.add(T0[i], np.multiply(Ta[i],  np.exp(-np.divide( (np.add(np.power(np.subtract(X,X0),2.0),np.power(np.subtract(Y,Y0),2))),(2.0*WT*WT ))) ))
 
 	Z[:,:,0] = Zb
