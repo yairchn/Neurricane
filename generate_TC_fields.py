@@ -13,10 +13,10 @@ def TC_fields(RMW ,width_ratio ,offset):
 	cp = 1004.0
 
 	# generate cartisian fields
-	dx = 500.0
-	nx = 200000.0/dx+1
-	x = np.linspace(-200000.0, 200000.0, nx)
-	y = np.linspace(-200000.0, 200000.0, nx)
+	dx = 1000.0
+	nx = 100000.0/dx+1
+	x = np.linspace(-600000.0, 600000.0, nx)
+	y = np.linspace(-600000.0, 600000.0, nx)
 	X, Y = np.meshgrid(x, y)
 	p = np.linspace(850.0,100.0,76)
 	Z0 = 1300

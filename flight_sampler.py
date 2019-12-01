@@ -5,12 +5,14 @@ import argparse
 from generate_TC_fields import TC_fields
 
 # command line:
-# python flight_sampler.py resolution    oriantation1  oriantation2  RMW    width_ratio  offset
-# python flight_sampler.py 10             0.1            0.5         50000  1.2          0.7
+# python flight_sampler.py resolution    oriantation1  oriantation2       RMW      width_ratio     offset
+# python flight_sampler.py    1.0             0.1            0.5          0.3          0.9          0.9
 
-# Here oriantation1 and 2 are values between 0 and 1 that determine the flight angle. if they are identical to eachother the lines will be prependicular
-# RMW is the Radius of Maximum wind [m] at the 850mb level should range between 30 and 100km.
-# width ratio is the ratio of width of the warm core and the surface low (RMW). it should be between 0.5 and 2.0
+# The model recieves 6 input variables thbat has values between 0 and 1
+# resolution is the spacing of the sampling (dropsondes). The code takes a value between 0 and 1 and convert it to a range [3, 10].
+# oriantation1, oriantation2 are values between 0 and 1 that determine the flight angle. If they are [1,0] the flight paths will be prependicular. if the are idnetical the flight paths will in be 45deg
+# RMW is the Radius of Maximum wind [m] at the 850mb level. The code takes a value between 0 and 1 and convert it to a range [30, 100]km
+# width ratio is the ratio of widths of the warm core and the surface low (RMW). The code takes a value between 0 and 1 and convert it to a range [0.0, 2.0]
 # off set if the dispacment on the x axis of the warm core with respect to the surface low. It is given in units of RMW, should be between 0 and 1
 # the outputs from this file are:
 # xc,yc, the location ofthe storm center; Z, T the 3D temperature and geopotential fields and their cartesian coordinates X[:,:], Y[:,:], p[:]
@@ -31,20 +33,30 @@ def main():
 	oriantation2 = args.oriantation2
 	RMW = args.RMW
 	width_ratio = args.width_ratio
-	offset_ = args.offset
-	offset = offset_*RMW
+	offset = args.offset
+	oriantation2 = 1.0-oriantation2
+
+	# take the random values between 0 and 1 and convert to relevent sizes
+	# resolution = 1.0+ round(resolution*50.0)
+	RMW = 30000 + RMW*100000 # between 30km and 130km
+	width_ratio = width_ratio*2.0
+	offset = offset*1.5*RMW # offset if proportional to storm size
+	resolution = 3.0 + resolution*7.0
 
 	xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,offset)
 	I,J,K = np.shape(Z)
-	i1 = np.linspace(0,I-1,I/resolution)
-	j1 = np.round(oriantation1*i1)
+	num1 = np.round(I/resolution-1)
+	num2 = np.round(J/resolution-1)
 
-	j1 += xc-j1[int(np.round(I/2/resolution))]
+	i1 = np.round(np.linspace(0,I-1,num1))
+	j1 = np.round(i1*oriantation1)
+	j1 += np.round(I/2)-j1[int(np.round(len(j1)/2))]
 
-	j2 = np.linspace(0,J-1,J/resolution-1)
+	j2 = i1
 	i2 = np.round(oriantation2*j2)
+	i2 = np.max(i2)-i2
+	i2 += np.round(J/2)-i2[int(np.round(len(i2)/2))]
 
-	i2 += xc-i2[int(np.round(I/2/resolution))]
 	x1 = [int(i) for i in i1]
 	y1 = [int(i) for i in j1]
 	x2 = [int(i) for i in i2]
@@ -70,11 +82,13 @@ def main():
 
 	plt.figure('upper level Z')
 	plt.contour(Z[:,:,75])
-	plt.plot(i1,j1,'.')
-	plt.plot(i2,j2,'.')
+	plt.plot(i1,j1,'.r')
+	plt.plot(i2,j2,'.b')
 	plt.figure('lower level Z and mid level T')
 	plt.contour(T[:,:,40])
 	plt.contour(Z[:,:,0])
+	plt.plot(i1,j1,'.r')
+	plt.plot(i2,j2,'.b')
 	plt.show()
 
 	return xc, yc, X, Y, Z, T, Z_flight1, Z_flight2, T_flight1, T_flight2, X_flight1, X_flight2, Y_flight1, Y_flight2
