@@ -8,12 +8,12 @@ from generate_TC_fields import TC_fields
 # python flight_sampler.py    resolution    oriantation1  oriantation2       RMW      width_ratio     east_offset  north_offset
 # python flight_sampler.py    1.0             0.1            0.5              0.3          0.9            0.9             0.9
 
-# The model recieves 6 input variables thbat has values between 0 and 1
+# The model recieves 7 input variables thbat has values between 0 and 1
 # resolution is the spacing of the sampling (dropsondes). The code takes a value between 0 and 1 and convert it to a range [3, 10].
 # oriantation1, oriantation2 are values between 0 and 1 that determine the flight angle. If they are [1,0] the flight paths will be prependicular. if the are idnetical the flight paths will in be 45deg
 # RMW is the Radius of Maximum wind [m] at the 850mb level. The code takes a value between 0 and 1 and convert it to a range [30, 100]km
 # width ratio is the ratio of widths of the warm core and the surface low (RMW). The code takes a value between 0 and 1 and convert it to a range [0.0, 2.0]
-# off set if the dispacment on the x axis of the warm core with respect to the surface low. It is given in units of RMW, should be between 0 and 1
+# offsets are the dispacments on the x asnd y axes of the warm core with respect to the surface low. They are given in units of RMW, should be between 0 and 1, 0
 # the outputs from this file are:
 # xc,yc, the location ofthe storm center; Z, T the 3D temperature and geopotential fields and their cartesian coordinates X[:,:], Y[:,:], p[:]
 # {Z,T,Z,Y}_flight# are the data sampled along flight path numbered #
