@@ -5,8 +5,8 @@ import argparse
 from generate_TC_fields import TC_fields
 
 # command line:
-# python flight_sampler.py resolution    oriantation1  oriantation2       RMW      width_ratio     offset
-# python flight_sampler.py    1.0             0.1            0.5          0.3          0.9          0.9
+# python flight_sampler.py    resolution    oriantation1  oriantation2       RMW      width_ratio     east_offset  north_offset
+# python flight_sampler.py    1.0             0.1            0.5              0.3          0.9            0.9             0.9
 
 # The model recieves 6 input variables thbat has values between 0 and 1
 # resolution is the spacing of the sampling (dropsondes). The code takes a value between 0 and 1 and convert it to a range [3, 10].
@@ -25,7 +25,8 @@ def main():
 	parser.add_argument("oriantation2", type=float)
 	parser.add_argument("RMW", type=float)
 	parser.add_argument("width_ratio", type=float)
-	parser.add_argument("offset", type=float)
+	parser.add_argument("east_offset", type=float)
+	parser.add_argument("north_offset", type=float)
 
 	args = parser.parse_args()
 	resolution = args.resolution
@@ -33,17 +34,19 @@ def main():
 	oriantation2 = args.oriantation2
 	RMW = args.RMW
 	width_ratio = args.width_ratio
-	offset = args.offset
+	east_offset = args.east_offset
+	north_offset = args.north_offset
 	oriantation2 = 1.0-oriantation2
 
 	# take the random values between 0 and 1 and convert to relevent sizes
 	# resolution = 1.0+ round(resolution*50.0)
 	RMW = 30000 + RMW*100000 # between 30km and 130km
 	width_ratio = width_ratio*2.0
-	offset = offset*1.5*RMW # offset if proportional to storm size
+	east_offset  = (east_offset-1.0)/2.0*1.5*RMW # offset if proportional to storm size
+	north_offset = (north_offset-1.0)/2.0*1.5*RMW # offset if proportional to storm size
 	resolution = 3.0 + resolution*7.0
 
-	xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,offset)
+	xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,east_offset, north_offset)
 	I,J,K = np.shape(Z)
 	num1 = np.round(I/resolution-1)
 	num2 = np.round(J/resolution-1)

@@ -3,9 +3,9 @@ import netCDF4 as nc
 import pylab as plt
 
 # command line:
-# python generate_TC_fields.py RMW    width_ratio  offset
-# python generate_TC_fields.py 50000  1.2          30000
-def TC_fields(RMW ,width_ratio ,offset):
+# python generate_TC_fields.py RMW    width_ratio  x_offset  y_offset
+# python generate_TC_fields.py 50000  1.2          30000      30000
+def TC_fields(RMW ,width_ratio ,x_offset, y_offset):
 
 	Rd = 287.4
 	g = 9.81
@@ -43,8 +43,8 @@ def TC_fields(RMW ,width_ratio ,offset):
 	Ta = np.multiply(10.0,np.exp(-np.divide( np.power(np.subtract(p,400),2),np.multiply(2.0,110*110))))
 
 	WT = WZ*width_ratio
-	X0 = offset
-	Y0 = 0.0
+	X0 = x_offset
+	Y0 = y_offset
 	xc,yc = np.argwhere(Zb == np.min(Zb))[0]
 	x1,y1 = np.shape(Zb)
 
