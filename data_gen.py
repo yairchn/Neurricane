@@ -83,9 +83,9 @@ def gen_sample(resolution, oriantation1, oriantation2, RMW, width_ratio, east_of
 
 
 N = 1000
-save_dir = "train"
-LOWER_BOUND = 0.3
-UPPER_BOUND = 0.7
+save_dir = "test"
+LOWER_BOUND = 0.2
+UPPER_BOUND = 0.8
 
 for i in range(N):
     resolution = random.uniform(LOWER_BOUND, UPPER_BOUND)

@@ -1,4 +1,3 @@
-import os
 import numpy as np
 from sklearn.linear_model import Ridge
 import pylab as plt
@@ -34,8 +33,6 @@ class PCAModel:
 
         X = np.array(X).T  # shape is (num_points, num_basis_fs)
         Y = np.array(vals) - self.mean3d(list(zip(xs, ys, zs)))  # shape is (num_points)
-        print(X.shape)
-        print(Y.shape)
 
         self.model.fit(X, Y)
 
