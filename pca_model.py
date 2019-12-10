@@ -28,65 +28,51 @@ class PCAModel:
         self.model = Ridge(alpha=alpha, fit_intercept=False)
 
     def fit(self, xs, ys, zs, vals):
-        X = []  # shape is (num_points, num_basis_fs)
-        Y = []  # shape is (num_points)
-        for x, y, z, val in zip(xs, ys, zs, vals):
-            X_row = []
-            for i in range(self.num_basis_fs):
-                X_row.append(self.basis_f[i]((x, y, z)).item() * self.scale[i])
-            X.append(X_row)
-            Y.append(val - self.mean3d((x, y, z)).item())
+        X = []
+        for i in range(self.num_basis_fs):
+            X.append(self.basis_f[i](list(zip(xs, ys, zs))) * self.scale[i])
+
+        X = np.array(X).T  # shape is (num_points, num_basis_fs)
+        Y = np.array(vals) - self.mean3d(list(zip(xs, ys, zs)))  # shape is (num_points)
+        print(X.shape)
+        print(Y.shape)
 
         self.model.fit(X, Y)
 
     def predict(self, xs, ys, zs):
-        vals = []
-        for x, y, z in zip(xs, ys, zs):
-            val = self.mean3d((x, y, z)).item()
-            for i in range(self.num_basis_fs):
-                val += self.basis_f[i]((x, y, z)).item() * self.model.coef_[i] * self.scale[i]
-            vals.append(val)
+        vals = self.mean3d(list(zip(xs, ys, zs)))
+        for i in range(self.num_basis_fs):
+            vals += self.basis_f[i](list(zip(xs, ys, zs))) * self.model.coef_[i] * self.scale[i]
 
-        return np.array(vals)
+        return vals
 
     def dummy_predict(self, xs, ys, zs):
-        vals = []
-        for x, y, z in zip(xs, ys, zs):
-            val = self.mean3d((x, y, z)).item()
-            vals.append(val)
-
-        return np.array(vals)
+        return self.mean3d(list(zip(xs, ys, zs)))
 
 
-calibration = np.load("pca_calibration_Z.npy", allow_pickle=True).item()
-data = np.load("./train/0.npy", allow_pickle=True).item()
+if __name__ == "__main__":
+    calibration = np.load("pca_calibration_Z.npy", allow_pickle=True).item()
+    data = np.load("./train/0.npy", allow_pickle=True).item()
 
-model = PCAModel(calibration["pca"], calibration["mean"],
-                 data["X"][0,:], data["Y"][:,0], range(76), calibration["scale"],
-                 alpha=0.01, num_basis_f=5)
-model.fit(data["xs_flight"][70::76],
-          data["ys_flight"][70::76],
-          data["zs_flight"][70::76],
-          data["Zs_flight"][70::76])
+    model = PCAModel(calibration["pca"], calibration["mean"],
+                     data["X"][0,:], data["Y"][:,0], range(76), calibration["scale"],
+                     alpha=0.01, num_basis_f=15)
 
-model.fit(data["X"].flatten(), data["Y"].flatten(), [level]*101*101, data["Z"][:,:,level].flatten())
+    model.fit(data["xs_flight"],
+              data["ys_flight"],
+              data["zs_flight"],
+              data["Zs_flight"])
+    level = 70
+    ground_truth = data["Z"][:,:,level]
+    pred_zs = model.predict(data["X"].flatten(), data["Y"].flatten(), [level]*101*101)
+    dummy_pred_zs = model.dummy_predict(data["X"].flatten(), data["Y"].flatten(), [level]*101*101)
 
-
-model.fit(data["xs_flight"],
-          data["ys_flight"],
-          data["zs_flight"],
-          data["Zs_flight"])
-level = 70
-ground_truth = data["Z"][:,:,level]
-pred_zs = model.predict(data["X"].flatten(), data["Y"].flatten(), [level]*101*101)
-dummy_pred_zs = model.dummy_predict(data["X"].flatten(), data["Y"].flatten(), [level]*101*101)
-
-pred_zs = pred_zs.reshape((101, 101))
-dummy_pred_zs = dummy_pred_zs.reshape((101, 101))
-plt.subplot(2,1,1)
-plt.contourf(pred_zs - ground_truth)
-plt.colorbar()
-plt.subplot(2,1,2)
-plt.contourf(dummy_pred_zs - ground_truth)
-plt.colorbar()
-plt.show()
+    pred_zs = pred_zs.reshape((101, 101))
+    dummy_pred_zs = dummy_pred_zs.reshape((101, 101))
+    plt.subplot(2,1,1)
+    plt.contourf(pred_zs - ground_truth)
+    plt.colorbar()
+    plt.subplot(2,1,2)
+    plt.contourf(dummy_pred_zs - ground_truth)
+    plt.colorbar()
+    plt.show()
