@@ -6,20 +6,12 @@ import netCDF4 as nc
 from generate_TC_fields import TC_fields
 from scipy.interpolate import interp1d
 # command line:
-# python WRF_sampler.py    wrf_path                                                                                     center_path
-# python WRF_sampler.py    /Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-22_16_00_00.nc      /Users/yaircohen/Documents/codes/Neurricane/storm_center/Patricia_trajectory.nc
+# python WRF_sampler.py    wrf_path
+# python WRF_sampler.py    /Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-22_16_00_00.nc
 
 # The model recieves 2 pathes, one for the wrf_data and one for the storm cengter location
 # storm center is taken from https://www.aoml.noaa.gov/hrd/Storm_pages/
 # the code returns the fields interpolated to pressure surfaces so they can be used to compute PGF as gradfiuent if Z in the horizontal direction on constant pressure surfaces
-
-# def main():
-	# parser = argparse.ArgumentParser(prog='PyCLES')
-	# parser.add_argument("wrf_path")
-	# parser.add_argument("center_path")
-	# args = parser.parse_args()
-	# wrf_path = args.wrf_path
-	# center_path = args.center_path
 
 def WRF_fields(wrf_path, center_path):
 
@@ -30,17 +22,6 @@ def WRF_fields(wrf_path, center_path):
 	year =  np.float(wrf_path[-22:-18])
 	month = np.float(wrf_path[-17:-15])
 	hour =  np.float(wrf_path[-11:-9])
-
-	# center = nc.Dataset(center_path, 'r')
-	# X_center = np.array(center.variables['x_center'])
-	# Y_center = np.array(center.variables['y_center'])
-	# hour_center = np.array(center.variables['hour_center'])
-	# month_center = np.array(center.variables['month_center'])
-	# day_center = np.array(center.variables['day_center'])
-
-	# current_index = np.where((day_center==day) & (hour_center==hour) & (month_center==month))[0][0]
-	# x_center = -X_center[current_index]
-	# y_center =  Y_center[current_index]
 
 	P = np.squeeze(np.add(data.variables['PB'], data.variables['P']))
 	P00 = np.array(data.variables['P00'])
