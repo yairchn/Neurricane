@@ -13,7 +13,7 @@ from scipy.interpolate import interp1d
 # storm center is taken from https://www.aoml.noaa.gov/hrd/Storm_pages/
 # the code returns the fields interpolated to pressure surfaces so they can be used to compute PGF as gradfiuent if Z in the horizontal direction on constant pressure surfaces
 
-def WRF_fields(wrf_path, center_path):
+def WRF_fields(wrf_path):
 
 	data = nc.Dataset(wrf_path, 'r')
 	LON = np.squeeze(data.variables['XLONG'])

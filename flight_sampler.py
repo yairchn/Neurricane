@@ -6,8 +6,8 @@ from generate_TC_fields import TC_fields
 from WRF_sampler import WRF_fields
 
 # command line:
-# python flight_sampler.py    resolution    oriantation1  oriantation2       RMW      width_ratio     east_offset  north_offset
-# python flight_sampler.py    1.0             0.1            0.5              0.3          0.9            0.9             0.9
+# python flight_sampler.py    resolution    oriantation1  oriantation2       RMW      width_ratio     east_offset  north_offset       mode
+# python flight_sampler.py    1.0             0.1            0.5              0.3          0.9            0.9             0.9        wrf / dummy
 
 # The model recieves 7 input variables thbat has values between 0 and 1
 # resolution is the spacing of the sampling (dropsondes). The code takes a value between 0 and 1 and convert it to a range [3, 10].
@@ -28,6 +28,7 @@ def main():
 	parser.add_argument("width_ratio", type=float)
 	parser.add_argument("east_offset", type=float)
 	parser.add_argument("north_offset", type=float)
+	parser.add_argument("mode", type=str)
 
 	args = parser.parse_args()
 	resolution = args.resolution
@@ -38,6 +39,7 @@ def main():
 	east_offset = args.east_offset
 	north_offset = args.north_offset
 	oriantation2 = 1.0-oriantation2
+	mode = args.mode
 
 	# take the random values between 0 and 1 and convert to relevent sizes
 	# resolution = 1.0+ round(resolution*50.0)
@@ -47,10 +49,14 @@ def main():
 	north_offset = (north_offset-1.0)/2.0*1.5*RMW # offset if proportional to storm size
 	resolution = 3.0 + resolution*7.0
 
-	wrf_path = '/Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-22_16_00_00.nc'
-	center_path = '/Users/yaircohen/Documents/codes/Neurricane/storm_center/Patricia_trajectory.nc'
-	# xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,east_offset, north_offset)
-	xc, yc, X, Y, p, Z, T = WRF_fields(wrf_path, center_path)
+	if mode == 'dummy':
+		xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,east_offset, north_offset)
+	elif mode == 'wrf':
+		wrf_path = '/Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-22_16_00_00.nc'
+		xc, yc, X, Y, p, Z, T = WRF_fields(wrf_path)
+	else:
+		print('mode is not recognized')
+
 	I,J,K = np.shape(Z)
 	num1 = np.round(I/resolution-1)
 	num2 = np.round(J/resolution-1)
