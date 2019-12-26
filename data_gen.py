@@ -82,7 +82,7 @@ def gen_sample(resolution, oriantation1, oriantation2, RMW, width_ratio, east_of
     return data
 
 
-N = 1000
+N = 10
 save_dir = "test"
 LOWER_BOUND = 0.2
 UPPER_BOUND = 0.8

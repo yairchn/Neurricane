@@ -3,6 +3,7 @@ import netCDF4 as nc
 import pylab as plt
 import argparse
 from generate_TC_fields import TC_fields
+from WRF_sampler import WRF_fields
 
 # command line:
 # python flight_sampler.py    resolution    oriantation1  oriantation2       RMW      width_ratio     east_offset  north_offset
@@ -46,7 +47,10 @@ def main():
 	north_offset = (north_offset-1.0)/2.0*1.5*RMW # offset if proportional to storm size
 	resolution = 3.0 + resolution*7.0
 
-	xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,east_offset, north_offset)
+	wrf_path = '/Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-22_16_00_00.nc'
+	center_path = '/Users/yaircohen/Documents/codes/Neurricane/storm_center/Patricia_trajectory.nc'
+	# xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,east_offset, north_offset)
+	xc, yc, X, Y, p, Z, T = WRF_fields(wrf_path, center_path)
 	I,J,K = np.shape(Z)
 	num1 = np.round(I/resolution-1)
 	num2 = np.round(J/resolution-1)
@@ -64,6 +68,7 @@ def main():
 	y1 = [int(i) for i in j1]
 	x2 = [int(i) for i in i2]
 	y2 = [int(i) for i in j2]
+
 	Z_flight1 = Z[x1,y1]
 	T_flight1 = T[x1,y1]
 	X_flight1 = X[x1,y1]
