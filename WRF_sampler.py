@@ -32,8 +32,8 @@ def WRF_fields(wrf_path):
 	x_center = LON[ind]
 	y_center = LAT[ind]
 	p_center = P[2,ind[0],ind[1]]
-	y = np.multiply(111.1, np.subtract(LAT, y_center))
-	x = np.multiply(111.1, np.multiply(np.subtract(LON, x_center), np.cos(np.deg2rad(LAT))))
+	y = np.multiply(111100.0, np.subtract(LAT, y_center))
+	x = np.multiply(111100.0, np.multiply(np.subtract(LON, x_center), np.cos(np.deg2rad(LAT))))
 
 	logP = np.squeeze(np.log(P))
 	logP_new = np.log(P_new)

@@ -52,7 +52,7 @@ def main():
 	if mode == 'dummy':
 		xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,east_offset, north_offset)
 	elif mode == 'wrf':
-		wrf_path = '/Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-22_16_00_00.nc'
+		wrf_path = '/Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-23_04_00_00.nc'
 		xc, yc, X, Y, p, Z, T = WRF_fields(wrf_path)
 	else:
 		print('mode is not recognized')
@@ -95,12 +95,12 @@ def main():
 	plt.plot(T_flight2)
 
 	plt.figure('upper level Z')
-	plt.contour(Z[:,:,75])
+	plt.contour(X, Y, Z[:,:,75])
 	plt.plot(i1,j1,'.r')
 	plt.plot(i2,j2,'.b')
 	plt.figure('lower level Z and mid level T')
-	plt.contour(T[:,:,40])
-	plt.contour(Z[:,:,0])
+	plt.contour(X, Y, T[:,:,40])
+	plt.contour(X, Y, Z[:,:,0])
 	plt.plot(i1,j1,'.r')
 	plt.plot(i2,j2,'.b')
 	plt.show()
