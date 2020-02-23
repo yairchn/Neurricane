@@ -95,7 +95,7 @@ def WRF_channel_fields(wrf_path):
 	P[np.abs(P)>9.9900000e+07]=np.nan
 
 	ght = np.moveaxis(GHT, 0, -1)
-	T = np.moveaxis(GHT, 0, -1)
+	T = np.moveaxis(temp, 0, -1)
 	u = np.moveaxis(U, 0, -1)
 	v = np.moveaxis(V, 0, -1)
 
@@ -105,6 +105,7 @@ def WRF_channel_fields(wrf_path):
 	ght_center = ght[200,200,6]
 	Y = np.multiply(111100.0, np.subtract(LAT, y_center))
 	X = np.multiply(111100.0, np.multiply(np.subtract(LON, x_center), np.cos(np.deg2rad(LAT))))
+	res = X[1]-X[0]
 	x, y = np.meshgrid(X, Y, sparse=False, indexing='ij')
 
-	return 0.0, 0.0, x, y, P, ght, T, 15,6
+	return 0.0, 0.0, x[155:245,155:245], y[155:245,155:245], P, ght[155:245,155:245,:], T[155:245,155:245,:], 6, 15

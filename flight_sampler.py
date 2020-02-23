@@ -87,14 +87,14 @@ def main():
 	Y_flight2 = Y[x2,y2]
 
 	plt.figure('Z flight1')
-	plt.plot(Z_flight1)
+	plt.plot(Z_flight1[:,i850])
 	plt.figure('Z flight2')
-	plt.plot(Z_flight2)
+	plt.plot(Z_flight2[:,i850])
 
 	plt.figure('T flight1')
-	plt.plot(T_flight1)
+	plt.plot(T_flight1[:,int(i150/2)])
 	plt.figure('T flight2')
-	plt.plot(T_flight2)
+	plt.plot(T_flight2[:,int(i150/2)])
 
 	plt.figure('upper level Z')
 	plt.contour(Z[:,:,i150])
