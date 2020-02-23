@@ -59,7 +59,6 @@ def main():
 		xc, yc, X, Y, p, Z, T, i850, i150 = WRF_channel_fields(wrf_path)
 	else:
 		print('mode is not recognized')
-
 	I,J,K = np.shape(Z)
 	num1 = np.round(I/resolution-1)
 	num2 = np.round(J/resolution-1)
@@ -98,12 +97,16 @@ def main():
 	plt.plot(T_flight2)
 
 	plt.figure('upper level Z')
-	plt.contour(X, Y, Z[:,:,i150])
+	plt.contour(Z[:,:,i150])
+	plt.plot(i1,j1,'.r')
+	plt.plot(i2,j2,'.b')
+	plt.figure('lower  level Z')
+	plt.contour(Z[:,:,i850])
 	plt.plot(i1,j1,'.r')
 	plt.plot(i2,j2,'.b')
 	plt.figure('lower level Z and mid level T')
-	plt.contour(X, Y, T[:,:,int((i150-i150%2)/2)])
-	plt.contour(X, Y, Z[:,:,i850])
+	plt.contour(T[:,:,i150])
+	plt.contour(Z[:,:,i850])
 	plt.plot(i1,j1,'.r')
 	plt.plot(i2,j2,'.b')
 	plt.show()
