@@ -59,8 +59,9 @@ def TC_fields(RMW ,width_ratio ,x_offset, y_offset):
 	Z[:,:,0] = Zb
 	for i in range(1,len(p)):
 	    Z[:,:,i] = np.add(Z[:,:,i-1], np.multiply(Rd*np.log(p[i-1]/p[i])/g/2,np.add(T[:,:,i-1],T[:,:,i])))
-
-	return xc, yc, X, Y, p, Z, T
+	i850 = 0
+	i150 = 70
+	return xc, yc, X, Y, p, Z, T, i850, i150
 
 if __name__ == '__main__':
     main()

@@ -72,7 +72,41 @@ def WRF_fields(wrf_path):
 	T = np.moveaxis(T1, 0, -1)
 	u = np.moveaxis(u1, 0, -1)
 	v = np.moveaxis(v1, 0, -1)
-	return 0.0, 0.0, x, y, P_out, Z, T
+	i850 = 0
+	i150 = 75
+	return 0.0, 0.0, x, y, P_out, Z, T, i850, i150
 
-if __name__ == '__main__':
-    main()
+
+def WRF_channel_fields(wrf_path):
+
+	data = nc.Dataset(wrf_path, 'r')
+	LON  = np.squeeze(data.variables['lon'])
+	LAT  = np.squeeze(data.variables['lat'])
+	GHT  = np.squeeze(data.variables['ght'])
+	temp    = np.squeeze(data.variables['temp'])
+	U    = np.squeeze(data.variables['ugrdr'])
+	V    = np.squeeze(data.variables['vgrdr'])
+	P    = np.squeeze(data.variables['lev']) # p[6] = 850mb
+
+	GHT[np.abs(GHT)>9.9900000e+07]=np.nan
+	temp[np.abs(temp)>9.9900000e+07]=np.nan
+	U[np.abs(U)>9.9900000e+07]=np.nan
+	V[np.abs(V)>9.9900000e+07]=np.nan
+	P[np.abs(P)>9.9900000e+07]=np.nan
+
+	ght = np.moveaxis(GHT, 0, -1)
+	T = np.moveaxis(GHT, 0, -1)
+	u = np.moveaxis(U, 0, -1)
+	v = np.moveaxis(V, 0, -1)
+
+	# storm is located at 200,200
+	x_center = LON[200]
+	y_center = LAT[200]
+	ght_center = ght[200,200,6]
+	Y = np.multiply(111100.0, np.subtract(LAT, y_center))
+	X = np.multiply(111100.0, np.multiply(np.subtract(LON, x_center), np.cos(np.deg2rad(LAT))))
+	x, y = np.meshgrid(X, Y, sparse=False, indexing='ij')
+	i850 = 6
+	i150 = 15
+
+	return 0.0, 0.0, x, y, P, ght, T, i850, i150

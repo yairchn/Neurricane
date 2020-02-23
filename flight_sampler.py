@@ -3,11 +3,11 @@ import netCDF4 as nc
 import pylab as plt
 import argparse
 from generate_TC_fields import TC_fields
-from WRF_sampler import WRF_fields
+from WRF_sampler import WRF_fields, WRF_channel_fields
 
 # command line:
 # python flight_sampler.py    resolution    oriantation1  oriantation2       RMW      width_ratio     east_offset  north_offset       mode
-# python flight_sampler.py    1.0             0.1            0.5              0.3          0.9            0.9             0.9        wrf / dummy
+# python flight_sampler.py    1.0             0.1            0.5              0.3          0.9            0.9             0.9        wrf / wrf_channel/ dummy
 
 # The model recieves 7 input variables thbat has values between 0 and 1
 # resolution is the spacing of the sampling (dropsondes). The code takes a value between 0 and 1 and convert it to a range [3, 10].
@@ -50,10 +50,13 @@ def main():
 	resolution = 3.0 + resolution*7.0
 
 	if mode == 'dummy':
-		xc, yc, X, Y, p, Z, T = TC_fields(RMW ,width_ratio,east_offset, north_offset)
+		xc, yc, X, Y, p, Z, T, i850, i150 = TC_fields(RMW ,width_ratio,east_offset, north_offset)
 	elif mode == 'wrf':
 		wrf_path = '/Volumes/TimeMachine/hurricanes/Patricia_for_Yair/wrfout_d04_2015-10-23_04_00_00.nc'
-		xc, yc, X, Y, p, Z, T = WRF_fields(wrf_path)
+		xc, yc, X, Y, p, Z, T, i850, i150 = WRF_fields(wrf_path)
+	elif mode == 'wrf_channel':
+		wrf_path = '/Users/yaircohen/Documents/DanFu/ENP2017d02_Rog_HUE09_0015_-3.00.nc'
+		xc, yc, X, Y, p, Z, T, i850, i150 = WRF_channel_fields(wrf_path)
 	else:
 		print('mode is not recognized')
 
@@ -95,12 +98,12 @@ def main():
 	plt.plot(T_flight2)
 
 	plt.figure('upper level Z')
-	plt.contour(X, Y, Z[:,:,75])
+	plt.contour(X, Y, Z[:,:,i150])
 	plt.plot(i1,j1,'.r')
 	plt.plot(i2,j2,'.b')
 	plt.figure('lower level Z and mid level T')
-	plt.contour(X, Y, T[:,:,40])
-	plt.contour(X, Y, Z[:,:,0])
+	plt.contour(X, Y, T[:,:,int((i150-i150%2)/2)])
+	plt.contour(X, Y, Z[:,:,i850])
 	plt.plot(i1,j1,'.r')
 	plt.plot(i2,j2,'.b')
 	plt.show()
