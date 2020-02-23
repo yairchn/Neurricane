@@ -106,8 +106,5 @@ def WRF_channel_fields(wrf_path):
 	Y = np.multiply(111100.0, np.subtract(LAT, y_center))
 	X = np.multiply(111100.0, np.multiply(np.subtract(LON, x_center), np.cos(np.deg2rad(LAT))))
 	x, y = np.meshgrid(X, Y, sparse=False, indexing='ij')
-	plt.figure('lower  level Z')
-	plt.contour(ght[:,:,6])
-	plt.show()
 
 	return 0.0, 0.0, x, y, P, ght, T, 15,6
